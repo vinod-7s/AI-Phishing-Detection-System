@@ -1,11 +1,13 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://ai-phishing-detection-system-wflj.onrender.com",
+  baseURL: "http://127.0.0.1:8000", // local backend
 });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
+
+  console.log("TOKEN:", token);
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

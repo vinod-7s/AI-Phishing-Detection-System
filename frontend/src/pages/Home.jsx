@@ -1,4 +1,5 @@
 
+import DownloadReport from "../components/DownloadReport";
 import Footer from "../components/Footer";
 import LoadingSkeleton from "../components/LoadingSkeleton";
 import AnalyticsChart from "../components/AnalyticsChart";
@@ -30,6 +31,10 @@ import {
   CheckCircle,
   Warning,
 } from "@mui/icons-material";
+
+const MotionPaper = motion.create(Paper);
+const MotionBox = motion.create(Box);
+const MotionButton = motion.create(Button);
 
 function Home({ mode, toggleTheme }) {
   const username = localStorage.getItem("username") || "User";
@@ -128,9 +133,7 @@ function Home({ mode, toggleTheme }) {
   }
 };
 
-const MotionPaper = motion.create(Paper);
-const MotionBox = motion.create(Box);
-const MotionButton = motion.create(Button);
+
 
   return (
     <>
@@ -139,9 +142,15 @@ const MotionButton = motion.create(Button);
   toggleTheme={toggleTheme}
 />
 
-      <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+      <Container
+    id="full-report"
+    maxWidth="xl"
+    sx={{ mt: 4, mb: 4 }}
+>
         {/* Header */}
         <MotionPaper
+           
+    
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -186,7 +195,12 @@ const MotionButton = motion.create(Button);
             </Typography>
           </motion.div>
         </MotionPaper>
-
+       
+{result && (
+  <DownloadReport
+    result={result}
+  />
+)}
         {/* Website Scanner - RIGHT AFTER HEADER */}
         <MotionPaper
           initial={{ opacity: 0, y: 30 }}
@@ -242,10 +256,11 @@ const MotionButton = motion.create(Button);
             {loading ? <CircularProgress size={25} color="inherit" /> : "🔍 Predict URL"}
           </MotionButton>
         </MotionPaper>
-
+{result && <DownloadReport result={result} />}
         {/* Prediction Result - RIGHT AFTER SCANNER */}
         {result && (
           <MotionPaper
+            id="prediction-report"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
@@ -438,7 +453,9 @@ const MotionButton = motion.create(Button);
             </MotionBox>
           </MotionPaper>
         )}
-
+{result && (
+    <DownloadReport />
+)}
         {/* Dashboard Cards */}
         <MotionBox
           initial={{ opacity: 0 }}
@@ -576,6 +593,7 @@ const MotionButton = motion.create(Button);
                       </motion.div>
                     </Box>
                   </motion.div>
+                  
                 ))
             )}
           </motion.div>
@@ -585,5 +603,6 @@ const MotionButton = motion.create(Button);
     </>
   );
 }
+
 
 export default Home;
