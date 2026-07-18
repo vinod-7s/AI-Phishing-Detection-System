@@ -1,6 +1,29 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import api from "../api";
+
+import {
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  InputAdornment,
+  IconButton,
+  CircularProgress,
+} from "@mui/material";
+
+import {
+  Person,
+  Email,
+  Lock,
+  Visibility,
+  VisibilityOff,
+  PersonAdd,
+} from "@mui/icons-material";
+
+import { toast } from "react-toastify";
 
 function Register() {
   const navigate = useNavigate();
@@ -11,58 +34,193 @@ function Register() {
     password: "",
   });
 
-  const register = async () => {
-    try {
-      await axios.post(
-        "http://127.0.0.1:8000/auth/register",
-        form
-      );
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-      alert("Registration Successful");
+  const register = async () => {
+    if (!form.username || !form.email || !form.password) {
+      toast.error("Please fill all fields");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await api.post("/auth/register", form);
+
+      toast.success("Registration Successful");
 
       navigate("/login");
-
     } catch (err) {
-      alert(err.response?.data?.detail || "Registration Failed");
+      console.log(err);
+
+      toast.error(
+        err.response?.data?.detail || "Registration Failed"
+      );
     }
+
+    setLoading(false);
   };
 
   return (
-    <div style={{ width: 400, margin: "80px auto" }}>
-      <h1>Create Account</h1>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background:
+          "linear-gradient(135deg,#1565C0,#42A5F5)",
+      }}
+    >
+      <Container maxWidth="sm">
+        <Paper
+          elevation={10}
+          sx={{
+            padding: 5,
+            borderRadius: 4,
+          }}
+        >
+          <Box
+            sx={{
+              textAlign: "center",
+              mb: 4,
+            }}
+          >
+            <PersonAdd
+              sx={{
+                fontSize: 70,
+                color: "#1565C0",
+              }}
+            />
 
-      <input
-        placeholder="Username"
-        onChange={(e)=>setForm({...form,username:e.target.value})}
-      />
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+            >
+              Create Account
+            </Typography>
 
-      <br /><br />
+            <Typography color="gray">
+              Register to Continue
+            </Typography>
+          </Box>
 
-      <input
-        placeholder="Email"
-        onChange={(e)=>setForm({...form,email:e.target.value})}
-      />
+          <TextField
+            fullWidth
+            label="Username"
+            margin="normal"
+            value={form.username}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                username: e.target.value,
+              })
+            }
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Person />
+                </InputAdornment>
+              ),
+            }}
+          />
 
-      <br /><br />
+          <TextField
+            fullWidth
+            label="Email"
+            margin="normal"
+            value={form.email}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                email: e.target.value,
+              })
+            }
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Email />
+                </InputAdornment>
+              ),
+            }}
+          />
 
-      <input
-        type="password"
-        placeholder="Password"
-        onChange={(e)=>setForm({...form,password:e.target.value})}
-      />
+          <TextField
+            fullWidth
+            label="Password"
+            margin="normal"
+            type={showPassword ? "text" : "password"}
+            value={form.password}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                password: e.target.value,
+              })
+            }
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Lock />
+                </InputAdornment>
+              ),
 
-      <br /><br />
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() =>
+                      setShowPassword(!showPassword)
+                    }
+                  >
+                    {showPassword ? (
+                      <VisibilityOff />
+                    ) : (
+                      <Visibility />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
 
-      <button onClick={register}>
-        Register
-      </button>
+          <Button
+            fullWidth
+            variant="contained"
+            sx={{
+              mt: 3,
+              height: 50,
+            }}
+            onClick={register}
+          >
+            {loading ? (
+              <CircularProgress
+                size={25}
+                color="inherit"
+              />
+            ) : (
+              "REGISTER"
+            )}
+          </Button>
 
-      <br /><br />
+          <Typography
+            sx={{
+              mt: 3,
+              textAlign: "center",
+            }}
+          >
+            Already have an account?
+          </Typography>
 
-      <Link to="/login">
-        Already have an account?
-      </Link>
-    </div>
+          <Button
+            component={Link}
+            to="/login"
+            fullWidth
+          >
+            Login
+          </Button>
+        </Paper>
+      </Container>
+    </Box>
   );
 }
 
