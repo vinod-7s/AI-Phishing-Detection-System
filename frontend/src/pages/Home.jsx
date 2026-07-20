@@ -107,7 +107,6 @@ function Home({ mode, toggleTheme }) {
     const res = await api.post("/predict/", {
       url,
     });
-
     console.log("Prediction Response:", res.data);
 
     setResult(res.data);
